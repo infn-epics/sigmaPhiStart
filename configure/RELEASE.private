@@ -1,0 +1,3 @@
+EPICS_BASE=/opt/epics/base
+SUPPORT=/opt/epics/extensions
+SNCSEQ=\$(SUPPORT)/seq
