@@ -20,6 +20,8 @@ drvModbusAsynConfigure ("TEST_SET",  "TEST", 1, 16, 5,  2, 0, 1000, "SigmaPhi")
 # Load section for driver 'Agilent-4UHV'
 
 dbLoadRecords("$(TOP)/db/sigmaPhiStart.template","device=$(PREFIX):SOL01:COIL02, rd_port=TEST_RD, cmd_port=TEST_CMD,set_port=TEST_SET,max=1")
+dbLoadRecords("$(TOP)/db/unimag.db","device=$(PREFIX):SOL01:COIL02")
+
 
 #
 # The circuits are complete. The engine of fate is primed. One turn of the

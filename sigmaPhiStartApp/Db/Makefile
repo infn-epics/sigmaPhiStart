@@ -11,6 +11,8 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 DB += sigmaPhiStart.template
+DB += unimag.db
+
 
 #----------------------------------------------------
 # If <anyname>.db template is not named <anyname>*.template add
