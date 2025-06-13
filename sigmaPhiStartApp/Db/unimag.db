@@ -10,110 +10,54 @@ alias("$(device):CURRENT_RB","$(device):current_rb")
 alias("$(device):VOLTAGE_RB","$(device):voltage_rb")
 alias("$(device):SETCURR_SP","$(device):current")
 
-record(calcout, "$(device):state_rb_calc")
-{
-    field(DESC, "Simplified state readback")
-    field(INPA, "$(device):STATE")
-    field(CALC, "A=39?1:A=34?2:A=128?4:A=129?4:A=130?5:A=131?5:A=255?0:0")
-    field(OUT, "$(device):state_rb PP")
-    field(OOPT, "Every Time")
-}
-record(mbbi, "$(device):state_rb")
-{
-    field(DESC, "Simplified State Readback")
+# State setpoint mbbo
+record(mbbo, "$(device):state") {
+    field(DESC, "State setpoint (OFF/ON/STANDBY/RESET)")
     field(ZRVL, "0")
     field(ZRST, "OFF")
     field(ONVL, "1")
     field(ONST, "ON")
     field(TWVL, "2")
     field(TWST, "STANDBY")
-    field(FRVL, "4")
-    field(FRST, "INTERLOCK")
-    field(FVVL, "5")
-    field(FVST, "ERROR")
+    field(THVL, "3")
+    field(THST, "RESET")
+    field(FLNK, "$(device):state_sp_to_status")
 }
 
-record(mbbo, "$(device):state")
-{
-    field(DESC, "State setpoint (ON/OFF)")
-    field(DTYP, "Raw Soft Channel")
+
+# Map state to CMD
+record(calcout, "$(device):state_sp_to_status") {
+    field(DESC, "Map STATE_SP to STATUS_SP")
+    field(INPA, "$(device):state")
+    field(CALC, "A=1?1:(A=0||A=2)?2:0")
     field(OUT, "$(device):CMD PP")
-    field(ZRVL, "18")
-    field(ZRST, "OFF")
-    field(ONVL, "17")
-    field(ONST, "ON")
-    field(ONVL, "17")
-    field(ONST, "ON")
+    field(OOPT, "Every Time")
 }
-# # State calculation
-# record(calcout, "$(device):state_calc") {
-#     field(DESC, "Calculate state from status bits")
-#     field(SCAN,"1 second")
-#     field(INPA, "$(device):SupplyOn")
-#     field(INPB, "$(device):GenericFault")
-#     field(INPC, "$(device):FETovertemp")
-#     field(INPD, "$(device):ShuntOvertemp")
-#     field(INPE, "$(device):DCunderV")
-#     field(INPF, "$(device):ExternalInterlock1")
-#     field(CALC, "A=0?0:(F=1?4:(B||C||D||E)?5:1)")
-#     field(OUT, "$(device):state_rb PP")
-#     field(OOPT, "Every Time")
+record(calc, "$(device):state_rb_calc")
+{
+    field(DESC, "State RB logic")
+    field(INPA, "$(device):ON")
+    field(INPB, "$(device):HWILK")
+    field(INPC, "$(device):FAULT")
+    field(CALC, "C?4:(B)?3:A?1:0")
+    field(FLNK, "$(device):state_rb")
+    field(SCAN, "1 second")
 
-# }
+}
 
-# record(mbbi, "$(device):state_rb") {
-#     field(DESC, "State readback")
-#     field(SCAN,"passive")
-#     field(ZRVL, "0")
-#     field(ZRST, "OFF")
-#     field(ONVL, "1")
-#     field(ONST, "ON")
-#     field(TWVL, "2")
-#     field(TWST, "STANDBY")
-#     field(THVL, "3")
-#     field(THST, "RESET")
-#     field(FRVL, "4")
-#     field(FRST, "INTERLOCK")
-#     field(FRSV, "MAJOR") 
-#     field(FVVL, "5")
-#     field(FVST, "ERROR")
-#     field(FVSV, "MAJOR")
-    
-# }
+record(mbbi, "$(device):state_rb")
+{
+    field(DESC, "Simplified State Readback")
+    field(INP, "$(device):state_rb_calc.VAL")
+    field(ZRVL, "0")
+    field(ZRST, "OFF")
+    field(ONVL, "1")
+    field(ONST, "ON")
+    field(TWVL, "2")
+    field(TWST, "STANDBY")
+    field(THVL, "3")
+    field(THST, "INTERLOCK")
+    field(FRVL, "4")
+    field(FRST, "ERROR")
+}
 
-# ##
-# ## State setpoint
-# record(mbbo, "$(device):state") {
-#     field(DESC, "State setpoint")
-#     field(ZRVL, "0")
-#     field(ZRST, "OFF")
-#     field(ONVL, "1")
-#     field(ONST, "ON")
-#     field(TWVL, "2")
-#     field(TWST, "STANDBY")
-#     field(THVL, "3")
-#     field(THST, "RESET")
-#     field(FRVL, "4")
-#     field(FRST, "INTERLOCK")
-#     field(FVVL, "5")
-#     field(FVST, "ERROR")
-#     field(FLNK, "$(device):state_to_enable")
-# }
-
-# # Map state to Enable
-# record(calcout, "$(device):state_to_enable") {
-#     field(DESC, "Map state to Enable")
-#     field(INPA, "$(device):state")
-#     field(CALC, "A=1?1:(A=2||A==0)?0:1")
-#     field(OUT, "$(device):Enable PP")
-#     field(OOPT, "Every Time")
-# }
-
-# # Map state to Reset
-# record(calcout, "$(device):state_to_reset") {
-#     field(DESC, "Map state to Reset")
-#     field(INPA, "$(device):state")
-#     field(CALC, "A=3?1:0")
-#     field(OUT, "$(device):Reset PP")
-#     field(OOPT, "Every Time")
-# }
