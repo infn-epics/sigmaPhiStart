@@ -6,12 +6,10 @@
 # Aliases for current and voltage
 # =================================================
 
-alias("$(device):CURRENT_RB","$(device):current_rb")
-alias("$(device):VOLTAGE_RB","$(device):voltage_rb")
-alias("$(device):SETCURR_SP","$(device):current")
+alias("$(device):SETCURR_SP","$(device):CURRENT_SP")
 
 # State setpoint mbbo
-record(mbbo, "$(device):state") {
+record(mbbo, "$(device):STATE_SP") {
     field(DESC, "State setpoint (OFF/ON/STANDBY/RESET)")
     field(ZRVL, "0")
     field(ZRST, "OFF")
@@ -28,7 +26,7 @@ record(mbbo, "$(device):state") {
 # Map state to CMD
 record(calcout, "$(device):state_sp_to_status") {
     field(DESC, "Map STATE_SP to STATUS_SP")
-    field(INPA, "$(device):state")
+    field(INPA, "$(device):STATE_SP")
     field(CALC, "A=1?1:(A=0||A=2)?2:0")
     field(OUT, "$(device):CMD PP")
     field(OOPT, "Every Time")
@@ -40,12 +38,12 @@ record(calc, "$(device):state_rb_calc")
     field(INPB, "$(device):HWILK")
     field(INPC, "$(device):FAULT")
     field(CALC, "C?4:(B)?3:A?1:0")
-    field(FLNK, "$(device):state_rb")
+    field(FLNK, "$(device):STATE_RB")
     field(SCAN, "1 second")
 
 }
 
-record(mbbi, "$(device):state_rb")
+record(mbbi, "$(device):STATE_RB")
 {
     field(DESC, "Simplified State Readback")
     field(INP, "$(device):state_rb_calc.VAL")
